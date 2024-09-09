@@ -20,7 +20,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
     const exe = b.addExecutable(.{
-        .name = "TermBreakout",
+        .name = "BashBlock",
         .root_source_file = b.path("src/main.zig"),
         .target = target,
         .optimize = optimize,
