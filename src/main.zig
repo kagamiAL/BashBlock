@@ -1,5 +1,10 @@
 const std = @import("std");
 const vaxis = @import("vaxis");
+const size_x = 19;
+const size_y = 11;
+const offset_x: comptime_int = size_x / 2;
+const offset_y: comptime_int = size_y / 2;
+const amt_cells = 9;
 
 /// Set the default panic handler to the vaxis panic_handler. This will clean up the terminal if any
 /// panics occur
@@ -130,11 +135,14 @@ const BashBlock = struct {
         // be changing that as well
         self.vx.setMouseShape(.default);
 
-        _ = win.child(.{ .x_off = @as(usize, @intFromFloat(@round(@as(f32, @floatFromInt(win.width / 2)) - 19 / 2))), .y_off = win.height / 2 - 5, .width = .{ .limit = 19 }, .height = .{ .limit = 10 }, .border = .{ .where = .all, .style = .{ .fg = .{ .rgb = .{ 255, 255, 255 } } } } });
+        const main_display = win.child(.{ .x_off = win.width / 2 - offset_x, .y_off = win.height / 2 - offset_y, .width = .{ .limit = size_x }, .height = .{ .limit = size_y }, .border = .{ .where = .all, .style = .{ .fg = .{ .rgb = .{ 255, 255, 255 } } } } });
 
-        // Print a text segment to the screen. This is a helper function which iterates over the
-        // text field for graphemes. Alternatively, you can implement your own print functions and
-        // use the writeCell API.
+        for (0..amt_cells) |x| {
+            for (0..amt_cells) |y| {
+                const child = main_display.child(.{ .x_off = x * 2, .y_off = y, .width = .{ .limit = 1 }, .height = .{ .limit = 1 } });
+                _ = try child.printSegment(.{ .text = "□" }, .{});
+            }
+        }
     }
 };
 
