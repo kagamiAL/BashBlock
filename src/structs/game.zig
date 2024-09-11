@@ -5,12 +5,12 @@ const Allocator = std.mem.Allocator;
 const Pixel = @import("./pixel.zig").Pixel;
 
 const amt_cells = 9;
-
 const default_color = [3]u8{ 255, 255, 255 };
 
 pub const Game = struct {
-    board: [amt_cells][amt_cells]?*Pixel = .{.{null} ** amt_cells} ** amt_cells,
+    board: [amt_cells][amt_cells]Pixel = .{.{Pixel{}} ** amt_cells} ** amt_cells,
     allocator: *const Allocator = undefined,
+    rand: *const std.Random = undefined,
 
     pub fn hook(self: *Game, allocator: *const Allocator, random: *const std.Random) void {
         self.allocator = allocator;
@@ -22,9 +22,10 @@ pub const Game = struct {
             for (0..amt_cells) |y| {
                 var color: [3]u8 = undefined;
                 var str: []const u8 = undefined;
-                if (self.board[y][x]) |pixel| {
+                const pixel = self.board[y][x];
+                if (pixel.current_colour != null or pixel.shape_colour != null) {
                     str = "■";
-                    color = pixel.current_colour orelse pixel.shape_colour;
+                    color = pixel.current_colour orelse pixel.shape_colour.?;
                 } else {
                     str = "□";
                     color = default_color;
