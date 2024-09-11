@@ -1,10 +1,14 @@
 const std = @import("std");
 const vaxis = @import("vaxis");
+
+const Game = @import("./structs/game.zig").Game;
+
 const size_x = 19;
 const size_y = 11;
 const offset_x: comptime_int = size_x / 2;
 const offset_y: comptime_int = size_y / 2;
-const amt_cells = 9;
+
+var game_main = Game{};
 
 /// Set the default panic handler to the vaxis panic_handler. This will clean up the terminal if any
 /// panics occur
@@ -135,14 +139,17 @@ const BashBlock = struct {
         // be changing that as well
         self.vx.setMouseShape(.default);
 
-        const main_display = win.child(.{ .x_off = win.width / 2 - offset_x, .y_off = win.height / 2 - offset_y, .width = .{ .limit = size_x }, .height = .{ .limit = size_y }, .border = .{ .where = .all, .style = .{ .fg = .{ .rgb = .{ 255, 255, 255 } } } } });
-
-        for (0..amt_cells) |x| {
-            for (0..amt_cells) |y| {
-                const child = main_display.child(.{ .x_off = x * 2, .y_off = y, .width = .{ .limit = 1 }, .height = .{ .limit = 1 } });
-                _ = try child.printSegment(.{ .text = "□" }, .{});
-            }
-        }
+        const main_display = win.child(.{
+            .x_off = win.width / 2 - offset_x,
+            .y_off = win.height / 2 - offset_y,
+            .width = .{ .limit = size_x },
+            .height = .{ .limit = size_y },
+            .border = .{
+                .where = .all,
+                .glyphs = .single_square,
+            },
+        });
+        game_main.drawBoardContents(&main_display);
     }
 };
 
@@ -161,6 +168,9 @@ pub fn main() !void {
     // Initialize our application
     var app = try BashBlock.init(allocator);
     defer app.deinit();
+
+    game_main.hookAllocator(&allocator);
+    defer game_main.deinit();
 
     // Run the application
     try app.run();
