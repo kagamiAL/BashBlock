@@ -165,12 +165,18 @@ pub fn main() !void {
     }
     const allocator = gpa.allocator();
 
+    var prng = std.rand.DefaultPrng.init(blk: {
+        var seed: u64 = undefined;
+        try std.posix.getrandom(std.mem.asBytes(&seed));
+        break :blk seed;
+    });
+    const rand = prng.random();
+
     // Initialize our application
     var app = try BashBlock.init(allocator);
     defer app.deinit();
 
-    game_main.hookAllocator(&allocator);
-    defer game_main.deinit();
+    game_main.hook(&allocator, &rand);
 
     // Run the application
     try app.run();

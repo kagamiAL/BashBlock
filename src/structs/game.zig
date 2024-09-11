@@ -12,18 +12,9 @@ pub const Game = struct {
     board: [amt_cells][amt_cells]?*Pixel = .{.{null} ** amt_cells} ** amt_cells,
     allocator: *const Allocator = undefined,
 
-    pub fn hookAllocator(self: *Game, allocator: *const Allocator) void {
+    pub fn hook(self: *Game, allocator: *const Allocator, random: *const std.Random) void {
         self.allocator = allocator;
-    }
-
-    pub fn deinit(self: *Game) void {
-        for (self.board) |row| {
-            for (row) |value| {
-                if (value) |pixel| {
-                    self.allocator.destroy(pixel);
-                }
-            }
-        }
+        self.rand = random;
     }
 
     pub fn drawBoardContents(self: *Game, display: *const vaxis.Window) void {
