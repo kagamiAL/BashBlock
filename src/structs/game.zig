@@ -11,15 +11,20 @@ const default_color = [3]u8{ 255, 255, 255 };
 pub const Game = struct {
     shapes: [3]Shape = .{Shape{}} ** 3,
     board: [amt_cells][amt_cells]Pixel = .{.{Pixel{}} ** amt_cells} ** amt_cells,
+    position: [2]i8 = .{ amt_cells / 2, amt_cells / 2 },
+    selected_shape: *Shape = undefined,
     allocator: *const Allocator = undefined,
     rand: *const std.Random = undefined,
 
     pub fn init(self: *Game, allocator: *const Allocator, random: *const std.Random) void {
         self.allocator = allocator;
         self.rand = random;
+        self.selected_shape = &self.shapes[0];
         for (&self.shapes) |*shape| {
             shape.randomize(random);
+            shape.active = true;
         }
+        self.tempColorCurrentShape(self.selected_shape);
     }
 
     pub fn drawBoardContents(self: *Game, display: *const vaxis.Window) void {
@@ -52,6 +57,15 @@ pub const Game = struct {
                     },
                 });
             }
+        }
+    }
+
+    fn tempColorCurrentShape(self: *Game, shape: *const Shape) void {
+        var i: usize = 0;
+        while (i < shape.offsets.len - 1) : (i += 2) {
+            const y: usize = @intCast(self.position[0] + shape.offsets[i]);
+            const x: usize = @intCast(self.position[1] + shape.offsets[i + 1]);
+            self.board[y][x].current_colour = shape.color;
         }
     }
 };
