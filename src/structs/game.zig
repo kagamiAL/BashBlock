@@ -3,11 +3,13 @@ const std = @import("std");
 const Allocator = std.mem.Allocator;
 
 const Pixel = @import("./pixel.zig").Pixel;
+const Shape = @import("./shape.zig").Shape;
 
 const amt_cells = 9;
 const default_color = [3]u8{ 255, 255, 255 };
 
 pub const Game = struct {
+    shapes: [3]Shape = .{Shape{}} ** 3,
     board: [amt_cells][amt_cells]Pixel = .{.{Pixel{}} ** amt_cells} ** amt_cells,
     allocator: *const Allocator = undefined,
     rand: *const std.Random = undefined,
