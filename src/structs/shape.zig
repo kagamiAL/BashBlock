@@ -10,9 +10,12 @@ pub const Shape = struct {
     color: [3]u8 = undefined,
     active: bool = false,
 
-    pub fn randomize(self: *Shape, random: std.Random) void {
-        const color_val = random.intRangeAtMost(u8, 0, 255);
-        self.color = [3]u8{ color_val, color_val, color_val };
-        self.offsets = all_shapes[random.intRangeAtMost(usize, 0, all_shapes.len)];
+    pub fn randomize(self: *Shape, random: *const std.Random) void {
+        self.color = [3]u8{
+            random.intRangeAtMost(u8, 0, 255),
+            random.intRangeAtMost(u8, 0, 255),
+            random.intRangeAtMost(u8, 0, 255),
+        };
+        self.offsets = all_shapes[random.intRangeAtMost(usize, 0, all_shapes.len - 1)];
     }
 };

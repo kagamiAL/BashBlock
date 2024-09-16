@@ -14,9 +14,12 @@ pub const Game = struct {
     allocator: *const Allocator = undefined,
     rand: *const std.Random = undefined,
 
-    pub fn hook(self: *Game, allocator: *const Allocator, random: *const std.Random) void {
+    pub fn init(self: *Game, allocator: *const Allocator, random: *const std.Random) void {
         self.allocator = allocator;
         self.rand = random;
+        for (&self.shapes) |*shape| {
+            shape.randomize(random);
+        }
     }
 
     pub fn drawBoardContents(self: *Game, display: *const vaxis.Window) void {
