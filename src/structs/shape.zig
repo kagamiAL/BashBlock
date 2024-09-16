@@ -1,6 +1,6 @@
 const std = @import("std");
 
-const left_shape = [_]i8{ 1, 0, -1, 0, 1, 1 };
+const left_shape = [_]i8{ 0, 0, 1, 0, -1, 0, 1, 1 };
 const all_shapes = [_][]const i8{
     &left_shape,
 };
