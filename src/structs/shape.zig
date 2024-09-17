@@ -1,6 +1,16 @@
 const std = @import("std");
 const all_shapes = @import("../data/all_shapes.zig").all_shapes;
 
+const colors = [_][3]u8{
+    .{ 0, 255, 255 },
+    .{ 255, 255, 0 },
+    .{ 128, 0, 128 },
+    .{ 0, 255, 0 },
+    .{ 255, 0, 0 },
+    .{ 0, 0, 255 },
+    .{ 255, 127, 0 },
+};
+
 fn rotateOffsetByAmt(offsets: []i8, amt: usize) void {
     var i: usize = 0;
     while (i < offsets.len - 1) : (i += 2) {
@@ -32,11 +42,7 @@ pub const Shape = struct {
         const offset_copy = try self.allocator.alloc(i8, shape_offsets.len);
         std.mem.copyForwards(i8, offset_copy, shape_offsets);
         rotateOffsetByAmt(offset_copy, amt_rotates);
-        self.color = [3]u8{
-            self.rand.intRangeAtMost(u8, 0, 255),
-            self.rand.intRangeAtMost(u8, 0, 255),
-            self.rand.intRangeAtMost(u8, 0, 255),
-        };
+        self.color = colors[self.rand.intRangeAtMost(usize, 0, colors.len - 1)];
         self.offsets = offset_copy;
     }
 
