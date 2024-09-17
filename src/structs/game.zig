@@ -98,4 +98,16 @@ pub const Game = struct {
             }
         }
     }
+
+    fn shapeCollidesWithOtherShapes(self: *Game, shape: *const Shape) bool {
+        var i: usize = 0;
+        while (i < shape.offsets.len - 1) : (i += 2) {
+            const y: usize = @intCast(self.position[0] + shape.offsets[i]);
+            const x: usize = @intCast(self.position[1] + shape.offsets[i + 1]);
+            if (self.board[y][x].shape_colour != null) {
+                return true;
+            }
+        }
+        return false;
+    }
 };
