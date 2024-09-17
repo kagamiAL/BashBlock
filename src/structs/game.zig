@@ -68,4 +68,12 @@ pub const Game = struct {
             self.board[y][x].current_colour = shape.color;
         }
     }
+
+    fn clearBoardTemp(self: *Game) void {
+        for (&self.board) |*arr| {
+            for (arr) |*pixel| {
+                pixel.current_colour = null;
+            }
+        }
+    }
 };
