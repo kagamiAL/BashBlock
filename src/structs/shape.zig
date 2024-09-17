@@ -9,6 +9,7 @@ const colors = [_][3]u8{
     .{ 255, 0, 0 },
     .{ 0, 0, 255 },
     .{ 255, 127, 0 },
+    .{ 206, 60, 174 },
 };
 
 fn rotateOffsetByAmt(offsets: []i8, amt: usize) void {
