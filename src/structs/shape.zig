@@ -18,4 +18,16 @@ pub const Shape = struct {
         };
         self.offsets = all_shapes[random.intRangeAtMost(usize, 0, all_shapes.len - 1)];
     }
+
+    pub fn inBounds(self: *Shape, y: i8, x: i8) bool {
+        var i: usize = 0;
+        while (i < self.offsets.len - 1) : (i += 2) {
+            const y2 = y + self.offsets[i];
+            const x2 = x + self.offsets[i + 1];
+            if (y2 < 0 or y2 >= 9 or x2 < 0 or x2 >= 9) {
+                return false;
+            }
+        }
+        return true;
+    }
 };
