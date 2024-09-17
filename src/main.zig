@@ -179,7 +179,8 @@ pub fn main() !void {
     var app = try BashBlock.init(allocator);
     defer app.deinit();
 
-    game_main.init(&allocator, &rand);
+    try game_main.init(&allocator, &rand);
+    defer game_main.deinit();
 
     // Run the application
     try app.run();

@@ -76,6 +76,12 @@ pub const Game = struct {
         }
     }
 
+    pub fn deinit(self: *Game) void {
+        for (&self.shapes) |*shape| {
+            self.allocator.free(shape.offsets);
+        }
+    }
+
     fn tempColorCurrentShape(self: *Game, shape: *const Shape) void {
         var i: usize = 0;
         while (i < shape.offsets.len - 1) : (i += 2) {
