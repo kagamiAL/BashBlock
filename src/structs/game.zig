@@ -7,6 +7,12 @@ const Shape = @import("./shape.zig").Shape;
 
 const amt_cells = 9;
 const default_color = [3]u8{ 255, 255, 255 };
+const directions = [4][2]i8{
+    [_]i8{ 0, -1 },
+    [_]i8{ 0, 1 },
+    [_]i8{ -1, 0 },
+    [_]i8{ 1, 0 },
+};
 
 pub const Game = struct {
     shapes: [3]Shape = .{Shape{}} ** 3,
@@ -25,6 +31,16 @@ pub const Game = struct {
             shape.active = true;
         }
         self.tempColorCurrentShape(self.selected_shape);
+    }
+
+    pub fn moveShape(self: *Game, index: usize) void {
+        const move_direction = directions[index];
+        if (self.selected_shape.inBounds(self.position[0] + move_direction[0], self.position[1] + move_direction[1])) {
+            self.clearBoardTemp();
+            self.position[0] += move_direction[0];
+            self.position[1] += move_direction[1];
+            self.tempColorCurrentShape(self.selected_shape);
+        }
     }
 
     pub fn drawBoardContents(self: *Game, display: *const vaxis.Window) void {

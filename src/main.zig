@@ -118,6 +118,9 @@ const BashBlock = struct {
                 // There are other matching functions available for specific purposes, as well
                 if (key.matches('c', .{ .ctrl = true }))
                     self.should_quit = true;
+                if (key.matchesAny(&.{ 57350, 57351, 57352, 57353 }, .{})) {
+                    game_main.moveShape(key.codepoint - 57350);
+                }
             },
             .winsize => |ws| try self.vx.resize(self.allocator, self.tty.anyWriter(), ws),
             else => {},
