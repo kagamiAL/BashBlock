@@ -22,12 +22,12 @@ pub const Game = struct {
     allocator: *const Allocator = undefined,
     rand: *const std.Random = undefined,
 
-    pub fn init(self: *Game, allocator: *const Allocator, random: *const std.Random) void {
+    pub fn init(self: *Game, allocator: *const Allocator, random: *const std.Random) !void {
         self.allocator = allocator;
         self.rand = random;
         self.selected_shape = &self.shapes[0];
         for (&self.shapes) |*shape| {
-            shape.randomize(random);
+            try shape.randomize(allocator, random);
             shape.active = true;
         }
         self.tempColorCurrentShape(self.selected_shape);
