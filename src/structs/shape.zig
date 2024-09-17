@@ -24,9 +24,9 @@ pub const Shape = struct {
         std.mem.copyForwards(i8, offset_copy, shape_offsets);
         rotateOffsetByAmt(offset_copy, amt_rotates);
         self.color = [3]u8{
-            random.intRangeAtMost(u8, 50, 255),
-            random.intRangeAtMost(u8, 50, 255),
-            random.intRangeAtMost(u8, 50, 255),
+            random.intRangeAtMost(u8, 0, 255),
+            random.intRangeAtMost(u8, 0, 255),
+            random.intRangeAtMost(u8, 0, 255),
         };
         self.offsets = offset_copy;
     }
