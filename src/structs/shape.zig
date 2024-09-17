@@ -1,9 +1,6 @@
 const std = @import("std");
+const all_shapes = @import("../data/all_shapes.zig").all_shapes;
 
-const left_shape = [_]i8{ 0, 0, 1, 0, -1, 0, 1, 1 };
-const all_shapes = [_][]const i8{
-    &left_shape,
-};
 
 pub const Shape = struct {
     offsets: []const i8 = undefined,
