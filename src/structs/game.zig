@@ -15,7 +15,7 @@ const directions = [4][2]i8{
 };
 
 pub const Game = struct {
-    shapes: [3]Shape = .{Shape{}} ** 3,
+    shapes: [3]Shape = undefined,
     board: [amt_cells][amt_cells]Pixel = .{.{Pixel{}} ** amt_cells} ** amt_cells,
     position: [2]i8 = .{ amt_cells / 2, amt_cells / 2 },
     selected_shape: *Shape = undefined,
@@ -26,9 +26,9 @@ pub const Game = struct {
         self.allocator = allocator;
         self.rand = random;
         self.selected_shape = &self.shapes[0];
-        for (&self.shapes) |*shape| {
-            try shape.randomize(allocator, random);
-            shape.active = true;
+        for (0..3) |i| {
+            self.shapes[i] = Shape.init(allocator, random);
+            try self.shapes[i].randomize();
         }
         self.tempColorCurrentShape(self.selected_shape);
     }
