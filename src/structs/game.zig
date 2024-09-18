@@ -73,11 +73,15 @@ pub const Game = struct {
                 self.board[position[0]][position[1]].shape_colour = self.selected_shape.color;
             }
             self.selected_shape.active = false;
-            self.selected_shape = try self.getNextAvailableShape();
-            self.position = .{ amt_cells / 2, amt_cells / 2 };
-            self.clearBoardTemp();
-            self.tempColorCurrentShape(self.selected_shape);
+            try self.switchSelectedShape();
         }
+    }
+
+    pub fn switchSelectedShape(self: *Game) !void {
+        self.selected_shape = try self.getNextAvailableShape();
+        self.position = .{ amt_cells / 2, amt_cells / 2 };
+        self.clearBoardTemp();
+        self.tempColorCurrentShape(self.selected_shape);
     }
 
     pub fn drawBoardContents(self: *Game, display: *const vaxis.Window) void {
