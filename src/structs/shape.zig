@@ -23,6 +23,26 @@ fn rotateOffsetByAmt(offsets: []i8, amt: usize) void {
     }
 }
 
+const ShapeIteratorRelative = struct {
+    offsets: []const i8,
+    position: [2]i8,
+    i: usize = 0,
+
+    pub fn init(offsets: []const i8, position: [2]i8) ShapeIteratorRelative {
+        return .{ .offsets = offsets, .position = position };
+    }
+
+    pub fn next(self: *ShapeIteratorRelative) ?[2]usize {
+        if (self.i < self.offsets.len - 1) {
+            const y: usize = @intCast(self.position[0] + self.offsets[self.i]);
+            const x: usize = @intCast(self.position[1] + self.offsets[self.i + 1]);
+            self.i += 2;
+            return .{ y, x };
+        }
+        return null;
+    }
+};
+
 pub const Shape = struct {
     offsets: []const i8 = undefined,
     color: [3]u8 = undefined,
@@ -57,5 +77,12 @@ pub const Shape = struct {
             }
         }
         return true;
+    }
+
+    pub fn iterRelative(self: *const Shape, position: [2]i8) ShapeIteratorRelative {
+        return ShapeIteratorRelative.init(
+            self.offsets,
+            position,
+        );
     }
 };
