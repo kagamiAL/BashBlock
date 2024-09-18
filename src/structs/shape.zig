@@ -13,6 +13,9 @@ const colors = [_][3]u8{
 };
 
 fn rotateOffsetByAmt(offsets: []i8, amt: usize) void {
+    if (amt == 0) {
+        return;
+    }
     var i: usize = 0;
     while (i < offsets.len - 1) : (i += 2) {
         for (0..amt) |_| {
@@ -59,7 +62,7 @@ pub const Shape = struct {
 
     pub fn randomize(self: *Shape) !void {
         const shape_offsets = all_shapes[self.rand.intRangeAtMost(usize, 0, all_shapes.len - 1)];
-        const amt_rotates = self.rand.intRangeAtMost(usize, 1, 3);
+        const amt_rotates = self.rand.intRangeAtMost(usize, 0, 3);
         const offset_copy = try self.allocator.alloc(i8, shape_offsets.len);
         std.mem.copyForwards(i8, offset_copy, shape_offsets);
         rotateOffsetByAmt(offset_copy, amt_rotates);
