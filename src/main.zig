@@ -119,6 +119,7 @@ const BashBlock = struct {
                 if (key.matches('c', .{ .ctrl = true }))
                     self.should_quit = true;
                 switch (key.codepoint) {
+                    13 => try game_main.placeShape(),
                     57350...57353 => game_main.moveShape(key.codepoint - 57350),
                     else => {},
                 }

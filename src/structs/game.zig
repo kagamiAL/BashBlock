@@ -66,6 +66,18 @@ pub const Game = struct {
         return &self.shapes[0];
     }
 
+    pub fn placeShape(self: *Game) !void {
+        if (!self.shapeCollidesWithOtherShapes(self.selected_shape)) {
+            var iter = self.selected_shape.iterRelative(self.position);
+            while (iter.next()) |position| {
+                self.board[position[0]][position[1]].shape_colour = self.selected_shape.color;
+            }
+            self.selected_shape.active = false;
+            self.selected_shape = try self.getNextAvailableShape();
+            self.position = .{ amt_cells / 2, amt_cells / 2 };
+            self.tempColorCurrentShape(self.selected_shape);
+        }
+    }
 
     pub fn drawBoardContents(self: *Game, display: *const vaxis.Window) void {
         for (0..amt_cells) |x| {
