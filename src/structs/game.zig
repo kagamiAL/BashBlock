@@ -49,6 +49,24 @@ pub const Game = struct {
         }
     }
 
+    pub fn getNextAvailableShape(self: *Game) !*Shape {
+        for (&self.shapes) |*shape| {
+            if (shape.active and shape != self.selected_shape) {
+                return shape;
+            }
+        }
+        if (self.selected_shape.active) {
+            return self.selected_shape;
+        }
+        //No more shapes, randomize
+        for (&self.shapes) |*shape| {
+            self.allocator.free(shape.offsets);
+            try shape.randomize();
+        }
+        return &self.shapes[0];
+    }
+
+
     pub fn drawBoardContents(self: *Game, display: *const vaxis.Window) void {
         for (0..amt_cells) |x| {
             for (0..amt_cells) |y| {
