@@ -75,6 +75,7 @@ pub const Game = struct {
             self.selected_shape.active = false;
             self.selected_shape = try self.getNextAvailableShape();
             self.position = .{ amt_cells / 2, amt_cells / 2 };
+            self.clearBoardTemp();
             self.tempColorCurrentShape(self.selected_shape);
         }
     }
@@ -115,7 +116,7 @@ pub const Game = struct {
     fn tempColorCurrentShape(self: *Game, shape: *const Shape) void {
         var iter = shape.iterRelative(self.position);
         while (iter.next()) |vector2| {
-            self.board[vector2[0]][vector2[1]].current_colour = shape.color;
+            self.board[vector2[0]][vector2[1]].current_colour = default_color;
         }
     }
 
