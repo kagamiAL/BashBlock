@@ -46,7 +46,7 @@ const ShapeIteratorRelative = struct {
 pub const Shape = struct {
     offsets: []const i8 = undefined,
     color: [3]u8 = undefined,
-    active: bool = false,
+    active: bool = true,
     rand: *const std.Random,
     allocator: *const std.mem.Allocator,
 
@@ -63,6 +63,7 @@ pub const Shape = struct {
         const offset_copy = try self.allocator.alloc(i8, shape_offsets.len);
         std.mem.copyForwards(i8, offset_copy, shape_offsets);
         rotateOffsetByAmt(offset_copy, amt_rotates);
+        self.active = true;
         self.color = colors[self.rand.intRangeAtMost(usize, 0, colors.len - 1)];
         self.offsets = offset_copy;
     }
