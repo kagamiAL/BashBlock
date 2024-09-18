@@ -83,11 +83,9 @@ pub const Game = struct {
     }
 
     fn tempColorCurrentShape(self: *Game, shape: *const Shape) void {
-        var i: usize = 0;
-        while (i < shape.offsets.len - 1) : (i += 2) {
-            const y: usize = @intCast(self.position[0] + shape.offsets[i]);
-            const x: usize = @intCast(self.position[1] + shape.offsets[i + 1]);
-            self.board[y][x].current_colour = shape.color;
+        var iter = shape.iterRelative(self.position);
+        while (iter.next()) |vector2| {
+            self.board[vector2[0]][vector2[1]].current_colour = shape.color;
         }
     }
 
@@ -100,11 +98,9 @@ pub const Game = struct {
     }
 
     fn shapeCollidesWithOtherShapes(self: *Game, shape: *const Shape) bool {
-        var i: usize = 0;
-        while (i < shape.offsets.len - 1) : (i += 2) {
-            const y: usize = @intCast(self.position[0] + shape.offsets[i]);
-            const x: usize = @intCast(self.position[1] + shape.offsets[i + 1]);
-            if (self.board[y][x].shape_colour != null) {
+        var iter = shape.iterRelative(self.position);
+        while (iter.next()) |vector2| {
+            if (self.board[vector2[0]][vector2[1]].shape_colour != null) {
                 return true;
             }
         }
