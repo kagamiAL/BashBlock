@@ -33,6 +33,12 @@ pub const Game = struct {
         self.tempColorCurrentShape(self.selected_shape);
     }
 
+    pub fn deinit(self: *Game) void {
+        for (&self.shapes) |*shape| {
+            self.allocator.free(shape.offsets);
+        }
+    }
+
     pub fn moveShape(self: *Game, index: usize) void {
         const move_direction = directions[index];
         if (self.selected_shape.inBounds(self.position[0] + move_direction[0], self.position[1] + move_direction[1])) {
@@ -73,12 +79,6 @@ pub const Game = struct {
                     },
                 });
             }
-        }
-    }
-
-    pub fn deinit(self: *Game) void {
-        for (&self.shapes) |*shape| {
-            self.allocator.free(shape.offsets);
         }
     }
 
