@@ -18,19 +18,18 @@ pub const Game = struct {
     shapes: [3]Shape = undefined,
     board: [amt_cells][amt_cells]Pixel = .{.{Pixel{}} ** amt_cells} ** amt_cells,
     position: [2]i8 = .{ amt_cells / 2, amt_cells / 2 },
-    selected_shape: *Shape = undefined,
+    selected_index: usize = 0,
     allocator: *const Allocator = undefined,
     rand: *const std.Random = undefined,
 
     pub fn init(self: *Game, allocator: *const Allocator, random: *const std.Random) !void {
         self.allocator = allocator;
         self.rand = random;
-        self.selected_shape = &self.shapes[0];
         for (0..3) |i| {
             self.shapes[i] = Shape.init(allocator, random);
             try self.shapes[i].randomize();
         }
-        self.tempColorCurrentShape(self.selected_shape);
+        self.tempColorCurrentShape(&self.shapes[self.selected_index]);
     }
 
     pub fn deinit(self: *Game) void {
@@ -41,47 +40,50 @@ pub const Game = struct {
 
     pub fn moveShape(self: *Game, index: usize) void {
         const move_direction = directions[index];
-        if (self.selected_shape.inBounds(self.position[0] + move_direction[0], self.position[1] + move_direction[1])) {
+        const selected_shape = &self.shapes[self.selected_index];
+        if (selected_shape.inBounds(self.position[0] + move_direction[0], self.position[1] + move_direction[1])) {
             self.clearBoardTemp();
             self.position[0] += move_direction[0];
             self.position[1] += move_direction[1];
-            self.tempColorCurrentShape(self.selected_shape);
+            self.tempColorCurrentShape(selected_shape);
         }
     }
 
-    pub fn getNextAvailableShape(self: *Game) !*Shape {
-        for (&self.shapes) |*shape| {
-            if (shape.active and shape != self.selected_shape) {
-                return shape;
+    pub fn getNextAvailableShapeIndex(self: *Game) !usize {
+        var i: usize = @mod(self.selected_index + 1, self.shapes.len);
+        while (i != self.selected_index) : (i = @mod(i + 1, self.shapes.len)) {
+            if (self.shapes[i].active) {
+                return i;
             }
         }
-        if (self.selected_shape.active) {
-            return self.selected_shape;
+        if (self.shapes[self.selected_index].active) {
+            return self.selected_index;
         }
         //No more shapes, randomize
         for (&self.shapes) |*shape| {
             self.allocator.free(shape.offsets);
             try shape.randomize();
         }
-        return &self.shapes[0];
+        return 0;
     }
 
     pub fn placeShape(self: *Game) !void {
-        if (!self.shapeCollidesWithOtherShapes(self.selected_shape)) {
-            var iter = self.selected_shape.iterRelative(self.position);
+        const selected_shape = &self.shapes[self.selected_index];
+        if (!self.shapeCollidesWithOtherShapes(selected_shape)) {
+            var iter = self.shapes[self.selected_index].iterRelative(self.position);
             while (iter.next()) |position| {
-                self.board[position[0]][position[1]].shape_colour = self.selected_shape.color;
+                self.board[position[0]][position[1]].shape_colour = selected_shape.color;
             }
-            self.selected_shape.active = false;
+            selected_shape.active = false;
             try self.switchSelectedShape();
         }
     }
 
     pub fn switchSelectedShape(self: *Game) !void {
-        self.selected_shape = try self.getNextAvailableShape();
+        self.selected_index = try self.getNextAvailableShapeIndex();
         self.position = .{ amt_cells / 2, amt_cells / 2 };
         self.clearBoardTemp();
-        self.tempColorCurrentShape(self.selected_shape);
+        self.tempColorCurrentShape(&self.shapes[self.selected_index]);
     }
 
     pub fn drawBoardContents(self: *Game, display: *const vaxis.Window) void {
