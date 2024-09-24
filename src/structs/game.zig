@@ -4,6 +4,7 @@ const Allocator = std.mem.Allocator;
 
 const Pixel = @import("./pixel.zig").Pixel;
 const Shape = @import("./shape.zig").Shape;
+const Buffer = @import("../util/buffer.zig").Buffer(usize, 9);
 
 const amt_cells = 9;
 const default_color = [3]u8{ 255, 255, 255 };
@@ -19,6 +20,7 @@ pub const Game = struct {
     board: [amt_cells][amt_cells]Pixel = .{.{Pixel{}} ** amt_cells} ** amt_cells,
     position: [2]i8 = .{ amt_cells / 2, amt_cells / 2 },
     selected_index: usize = 0,
+    num_scored: usize = 0,
     allocator: *const Allocator = undefined,
     rand: *const std.Random = undefined,
 
@@ -127,6 +129,7 @@ pub const Game = struct {
     }
 
     fn clearBoardTemp(self: *Game) void {
+        self.num_scored = 0;
         for (&self.board) |*arr| {
             for (arr) |*pixel| {
                 pixel.current_colour = null;
@@ -143,4 +146,18 @@ pub const Game = struct {
         }
         return false;
     }
+
+    fn highlightPotentialMatches(self: *Game) void {
+        var rows = Buffer{};
+        var columns = Buffer{};
+        var sqaures = Buffer{};
+        const selected_shape = &self.shapes[self.selected_index];
+        var iterator = selected_shape.iterRelative(self.position);
+        while (iterator.next()) |pos| {
+            rows.appendUnique(pos[0]);
+            columns.appendUnique(pos[1]);
+        }
+    }
+
+    fn getSquareIndex(self: *Game) usize {}
 };
