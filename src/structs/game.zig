@@ -48,6 +48,7 @@ pub const Game = struct {
             self.position[0] += move_direction[0];
             self.position[1] += move_direction[1];
             self.tempColorCurrentShape(selected_shape);
+            self.highlightPotentialMatches();
         }
     }
 
@@ -148,6 +149,7 @@ pub const Game = struct {
     }
 
     fn highlightPotentialMatches(self: *Game) void {
+        //These are to know what to check
         var rows = Buffer{};
         var columns = Buffer{};
         var sqaures = Buffer{};
@@ -156,8 +158,13 @@ pub const Game = struct {
         while (iterator.next()) |pos| {
             rows.appendUnique(pos[0]);
             columns.appendUnique(pos[1]);
+            sqaures.appendUnique(Game.getSquareIndex(pos));
         }
     }
 
-    fn getSquareIndex(self: *Game) usize {}
+    fn getSquareIndex(position: [2]usize) usize {
+        const y: usize = position[0] / 3;
+        const x: usize = position[1] / 3;
+        return (y * 3) + x;
+    }
 };
