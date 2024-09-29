@@ -165,6 +165,23 @@ pub const Game = struct {
             columns.appendUnique(pos[1]);
             sqaures.appendUnique(Game.getSquareIndex(pos));
         }
+        for (rows.iter()) |row| {
+            if (self.checkRow(row)) {
+                self.num_scored += 1;
+            }
+        }
+    }
+
+    fn checkRow(self: *Game, rowIndex: usize) bool {
+        for (self.board[rowIndex]) |v| {
+            if (v.shape_colour == null and v.current_colour == null) {
+                return false;
+            }
+        }
+        for (&self.board[rowIndex]) |*v| {
+            v.markForRemoval(self.shapes[self.selected_index].color);
+        }
+        return true;
     }
 
     fn getSquareIndex(position: [2]usize) usize {
