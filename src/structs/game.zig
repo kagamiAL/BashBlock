@@ -87,6 +87,7 @@ pub const Game = struct {
         self.position = .{ amt_cells / 2, amt_cells / 2 };
         self.clearBoardTemp();
         self.tempColorCurrentShape(&self.shapes[self.selected_index]);
+        self.highlightPotentialMatches();
     }
 
     pub fn drawBoardContents(self: *Game, display: *const vaxis.Window) void {
