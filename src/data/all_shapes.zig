@@ -8,6 +8,8 @@ const straight_5 = [_]i8{ 0, 0, -1, 0, -2, 0, 1, 0, 2, 0 };
 const t_shape = [_]i8{ 0, 0, 0, 1, 0, -1, 1, 0 };
 const cross = [_]i8{ 0, 0, 1, 0, -1, 0, 0, 1, 0, -1 };
 const u_shape = [_]i8{ 0, 0, 0, 1, 0, -1, -1, 1, -1, -1 };
+const two = [_]i8{ 0, 0, 0, 1 };
+const diag = [_]i8{ 0, 0, -1, 1 };
 
 pub const all_shapes = [_][]const i8{
     &l_shape,
@@ -20,4 +22,6 @@ pub const all_shapes = [_][]const i8{
     &t_shape,
     &cross,
     &u_shape,
+    &two,
+    &diag,
 };
