@@ -175,6 +175,11 @@ pub const Game = struct {
                 self.num_scored += 1;
             }
         }
+        for (sqaures.iter()) |square| {
+            if (self.checkSquare(square)) {
+                self.num_scored += 1;
+            }
+        }
     }
 
     fn checkRow(self: *Game, rowIndex: usize) bool {
@@ -198,6 +203,27 @@ pub const Game = struct {
         }
         for (&self.board) |*row| {
             row[column_index].markForRemoval(self.shapes[self.selected_index].color);
+        }
+        return true;
+    }
+
+    fn checkSquare(self: *Game, square_number: usize) bool {
+        var y: usize = square_number / 3;
+        var x: usize = square_number - (3 * y);
+        y *= 3;
+        x *= 3;
+        for (0..3) |y1| {
+            for (0..3) |x1| {
+                const pixel = self.board[y + y1][x + x1];
+                if (pixel.current_colour == null and pixel.shape_colour == null) {
+                    return false;
+                }
+            }
+        }
+        for (0..3) |y1| {
+            for (0..3) |x1| {
+                self.board[y + y1][x + x1].markForRemoval(self.shapes[self.selected_index].color);
+            }
         }
         return true;
     }
