@@ -133,7 +133,7 @@ pub const Game = struct {
         self.num_scored = 0;
         for (&self.board) |*arr| {
             for (arr) |*pixel| {
-                pixel.current_colour = null;
+                pixel.resetTemp();
             }
         }
     }
