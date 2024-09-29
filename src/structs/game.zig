@@ -149,6 +149,9 @@ pub const Game = struct {
     }
 
     fn highlightPotentialMatches(self: *Game) void {
+        if (self.shapeCollidesWithOtherShapes(&self.shapes[self.selected_index])) {
+            return;
+        }
         //These are to know what to check
         var rows = Buffer{};
         var columns = Buffer{};
