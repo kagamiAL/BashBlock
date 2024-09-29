@@ -78,6 +78,7 @@ pub const Game = struct {
                 self.board[position[0]][position[1]].shape_colour = selected_shape.color;
             }
             selected_shape.active = false;
+            self.processScoredMatchingShapes();
             try self.switchSelectedShape();
         }
     }
@@ -170,5 +171,15 @@ pub const Game = struct {
         const y: usize = position[0] / 3;
         const x: usize = position[1] / 3;
         return (y * 3) + x;
+    }
+
+    fn processScoredMatchingShapes(self: *Game) void {
+        for (&self.board) |*arr| {
+            for (arr) |*pixel| {
+                if (pixel.marked) {
+                    pixel.shape_colour = null;
+                }
+            }
+        }
     }
 };
