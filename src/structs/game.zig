@@ -170,6 +170,11 @@ pub const Game = struct {
                 self.num_scored += 1;
             }
         }
+        for (columns.iter()) |column| {
+            if (self.checkColumn(column)) {
+                self.num_scored += 1;
+            }
+        }
     }
 
     fn checkRow(self: *Game, rowIndex: usize) bool {
@@ -180,6 +185,19 @@ pub const Game = struct {
         }
         for (&self.board[rowIndex]) |*v| {
             v.markForRemoval(self.shapes[self.selected_index].color);
+        }
+        return true;
+    }
+
+    fn checkColumn(self: *Game, column_index: usize) bool {
+        for (self.board) |row| {
+            const pixel = row[column_index];
+            if (pixel.shape_colour == null and pixel.current_colour == null) {
+                return false;
+            }
+        }
+        for (&self.board) |*row| {
+            row[column_index].markForRemoval(self.shapes[self.selected_index].color);
         }
         return true;
     }
