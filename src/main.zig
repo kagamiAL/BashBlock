@@ -121,7 +121,8 @@ const BashBlock = struct {
                 switch (key.codepoint) {
                     13 => try game_main.placeShape(),
                     57350...57353 => game_main.moveShape(key.codepoint - 57350),
-                    'z' => try game_main.switchSelectedShape(),
+                    'x' => try game_main.switchSelectedShape(),
+                    'c' => try game_main.placeShape(),
                     else => {},
                 }
             },
