@@ -19,6 +19,7 @@ pub const Game = struct {
     shapes: [3]Shape = undefined,
     board: [amt_cells][amt_cells]Pixel = .{.{Pixel{}} ** amt_cells} ** amt_cells,
     position: [2]i8 = .{ amt_cells / 2, amt_cells / 2 },
+    score: usize = 0,
     selected_index: usize = 0,
     num_scored: usize = 0,
     allocator: *const Allocator = undefined,
@@ -78,7 +79,9 @@ pub const Game = struct {
                 self.board[position[0]][position[1]].shape_colour = selected_shape.color;
             }
             selected_shape.active = false;
-            self.processScoredMatchingShapes();
+            if (self.num_scored > 0) {
+                self.processScoredMatchingShapes();
+            }
             try self.switchSelectedShape();
         }
     }
@@ -235,12 +238,16 @@ pub const Game = struct {
     }
 
     fn processScoredMatchingShapes(self: *Game) void {
+        var amt_pixels: usize = 0;
         for (&self.board) |*arr| {
             for (arr) |*pixel| {
                 if (pixel.marked) {
                     pixel.shape_colour = null;
+                    amt_pixels += 1;
                 }
             }
         }
+        self.score += amt_pixels * self.num_scored;
+    }
     }
 };
