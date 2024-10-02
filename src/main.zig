@@ -136,6 +136,7 @@ const BashBlock = struct {
         // Window is a bounded area with a view to the screen. You cannot draw outside of a windows
         // bounds. They are light structures, not intended to be stored.
         const win = self.vx.window();
+        const info_str = "(x) to switch shapes, (c) to place shapes";
 
         // Clearing the window has the effect of setting each cell to it's "default" state. Vaxis
         // applications typically will be immediate mode, and you will redraw your entire
@@ -162,8 +163,15 @@ const BashBlock = struct {
             .width = .{ .limit = Game.max_num_width + 7 },
             .height = .{ .limit = 1 },
         });
+        const info_display = win.child(.{
+            .x_off = win.width - info_str.len,
+            .y_off = win.height - 1,
+            .width = .{ .limit = info_str.len },
+            .height = .{ .limit = 1 },
+        });
         game_main.drawBoardContents(&main_display);
         try game_main.displayGameScore(&score_display);
+        _ = try info_display.printSegment(.{ .text = info_str }, .{});
     }
 };
 
