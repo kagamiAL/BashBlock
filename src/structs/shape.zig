@@ -12,7 +12,7 @@ const colors = [_][3]u8{
     .{ 206, 60, 174 },
 };
 
-fn rotateOffsetByAmt(offsets: []i8, amt: usize) void {
+inline fn rotateOffsetByAmt(offsets: []i8, amt: usize) void {
     if (amt == 0) {
         return;
     }
@@ -71,7 +71,7 @@ pub const Shape = struct {
         self.offsets = offset_copy;
     }
 
-    pub fn inBounds(self: *Shape, y: i8, x: i8) bool {
+    pub inline fn inBounds(self: *Shape, y: i8, x: i8) bool {
         var i: usize = 0;
         while (i < self.offsets.len - 1) : (i += 2) {
             const y2 = y + self.offsets[i];
