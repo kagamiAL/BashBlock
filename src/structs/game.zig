@@ -4,9 +4,10 @@ const Allocator = std.mem.Allocator;
 
 const Pixel = @import("./pixel.zig").Pixel;
 const Shape = @import("./shape.zig").Shape;
-const Buffer = @import("../util/buffer.zig").Buffer(usize, 9);
+const Buffer = @import("../util/buffer.zig").Buffer;
 
 const amt_cells = 9;
+const prefix = "Score: ";
 const default_color = [3]u8{ 255, 255, 255 };
 const directions = [4][2]i8{
     [_]i8{ 0, -1 },
@@ -16,10 +17,15 @@ const directions = [4][2]i8{
 };
 
 pub const Game = struct {
+    const U8Buffer = Buffer(u8, max_num_width + 7);
+    const USizeBuffer = Buffer(usize, 9);
+    pub const max_num_width = 20;
+
     shapes: [3]Shape = undefined,
     board: [amt_cells][amt_cells]Pixel = .{.{Pixel{}} ** amt_cells} ** amt_cells,
     position: [2]i8 = .{ amt_cells / 2, amt_cells / 2 },
     score: usize = 0,
+    score_display_buffer: U8Buffer = U8Buffer{},
     selected_index: usize = 0,
     num_scored: usize = 0,
     allocator: *const Allocator = undefined,
@@ -33,6 +39,8 @@ pub const Game = struct {
             try self.shapes[i].randomize();
         }
         self.tempColorCurrentShape(&self.shapes[self.selected_index]);
+        self.score_display_buffer.appendConst(prefix);
+        self.score_display_buffer.append('0');
     }
 
     pub fn deinit(self: *Game) void {
@@ -81,6 +89,7 @@ pub const Game = struct {
             selected_shape.active = false;
             if (self.num_scored > 0) {
                 self.processScoredMatchingShapes();
+                try self.updateScoreDisplayBuffer();
             }
             try self.switchSelectedShape();
         }
@@ -127,6 +136,12 @@ pub const Game = struct {
         }
     }
 
+    pub fn displayGameScore(self: *Game, display: *const vaxis.Window) !void {
+        _ = try display.printSegment(.{
+            .text = self.score_display_buffer.iter(),
+        }, .{});
+    }
+
     fn tempColorCurrentShape(self: *Game, shape: *const Shape) void {
         var iter = shape.iterRelative(self.position);
         while (iter.next()) |vector2| {
@@ -158,9 +173,9 @@ pub const Game = struct {
             return;
         }
         //These are to know what to check
-        var rows = Buffer{};
-        var columns = Buffer{};
-        var sqaures = Buffer{};
+        var rows = USizeBuffer{};
+        var columns = USizeBuffer{};
+        var sqaures = USizeBuffer{};
         const selected_shape = &self.shapes[self.selected_index];
         var iterator = selected_shape.iterRelative(self.position);
         while (iterator.next()) |pos| {
@@ -249,5 +264,11 @@ pub const Game = struct {
         }
         self.score += amt_pixels * self.num_scored;
     }
+
+    fn updateScoreDisplayBuffer(self: *Game) !void {
+        self.score_display_buffer.crop(7);
+        var buf: [max_num_width]u8 = undefined;
+        const num_str = try std.fmt.bufPrint(&buf, "{}", .{self.score});
+        self.score_display_buffer.appendConst(num_str);
     }
 };
