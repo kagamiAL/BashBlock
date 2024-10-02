@@ -231,7 +231,7 @@ pub const Game = struct {
         return true;
     }
 
-    fn getSquareIndex(position: [2]usize) usize {
+    inline fn getSquareIndex(position: [2]usize) usize {
         const y: usize = position[0] / 3;
         const x: usize = position[1] / 3;
         return (y * 3) + x;
