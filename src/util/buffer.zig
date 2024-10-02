@@ -11,6 +11,12 @@ pub fn Buffer(comptime T: type, comptime size: usize) type {
             } else unreachable;
         }
 
+        pub fn appendConst(self: *Self, arr: []const T) void {
+            for (arr) |v| {
+                self.append(v);
+            }
+        }
+
         pub fn appendUnique(self: *Self, item: T) void {
             if (!self.contains(item)) {
                 self.append(item);
@@ -19,6 +25,10 @@ pub fn Buffer(comptime T: type, comptime size: usize) type {
 
         pub fn iter(self: *Self) []T {
             return self.__buffer[0..self.len];
+        }
+
+        pub fn crop(self: *Self, len: usize) void {
+            self.len = len;
         }
 
         pub fn contains(self: *Self, item: T) bool {
