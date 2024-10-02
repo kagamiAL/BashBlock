@@ -98,7 +98,7 @@ const BashBlock = struct {
                 try self.update(event);
             }
             // Draw our application after handling events
-            self.draw();
+            try self.draw();
 
             // It's best to use a buffered writer for the render method. TTY provides one, but you
             // may use your own. The provided bufferedWriter has a buffer size of 4096
@@ -131,7 +131,7 @@ const BashBlock = struct {
     }
 
     /// Draw our current state
-    pub fn draw(self: *BashBlock) void {
+    pub fn draw(self: *BashBlock) !void {
         // Window is a bounded area with a view to the screen. You cannot draw outside of a windows
         // bounds. They are light structures, not intended to be stored.
         const win = self.vx.window();
@@ -155,7 +155,14 @@ const BashBlock = struct {
                 .glyphs = .single_square,
             },
         });
+        const score_display = win.child(.{
+            .x_off = 0,
+            .y_off = win.height - 1,
+            .width = .{ .limit = Game.max_num_width + 7 },
+            .height = .{ .limit = 1 },
+        });
         game_main.drawBoardContents(&main_display);
+        try game_main.displayGameScore(&score_display);
     }
 };
 
