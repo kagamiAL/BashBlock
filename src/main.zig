@@ -120,6 +120,7 @@ const BashBlock = struct {
                     self.should_quit = true;
                 switch (key.codepoint) {
                     13 => try game_main.placeShape(),
+                    92 => try game_main.switchSelectedShape(),
                     57350...57353 => game_main.moveShape(key.codepoint - 57350),
                     'x' => try game_main.switchSelectedShape(),
                     'c' => try game_main.placeShape(),
@@ -136,7 +137,7 @@ const BashBlock = struct {
         // Window is a bounded area with a view to the screen. You cannot draw outside of a windows
         // bounds. They are light structures, not intended to be stored.
         const win = self.vx.window();
-        const info_str = "(x) to switch shapes, (c) to place shapes";
+        const info_str = "(↑ ↓ ← →) to move, (x) to switch shapes, (c) to place shapes";
 
         // Clearing the window has the effect of setting each cell to it's "default" state. Vaxis
         // applications typically will be immediate mode, and you will redraw your entire
@@ -159,12 +160,12 @@ const BashBlock = struct {
         });
         const score_display = win.child(.{
             .x_off = 0,
-            .y_off = win.height - 1,
+            .y_off = 1,
             .width = .{ .limit = Game.max_num_width + 7 },
             .height = .{ .limit = 1 },
         });
         const info_display = win.child(.{
-            .x_off = win.width - info_str.len,
+            .x_off = 0,
             .y_off = win.height - 1,
             .width = .{ .limit = info_str.len },
             .height = .{ .limit = 1 },
