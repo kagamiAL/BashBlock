@@ -5,7 +5,7 @@ BashBlock is a terminal implementation of a tetris matching game similar to game
 
 # Running
 
-To run BashBlock from source, you need to have zig (0.13.0+) installed and libvaxis cloned into the game's directory. If you do not wish to clone libvaxis into the game's directory, you can also change build.zig.zon so that it accepts a url/hash to libvaxis instead of a path.
+To run BashBlock from source, you need to have zig (0.13.0) installed and libvaxis cloned into the game's directory. If you do not wish to clone libvaxis into the game's directory, you can also change build.zig.zon so that it accepts a url/hash to libvaxis instead of a path.
 
 See https://ziglang.org/learn/getting-started/ for zig installation instructions, and https://github.com/rockorager/libvaxis for libvaxis
 
