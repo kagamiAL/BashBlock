@@ -12,6 +12,7 @@ const colors = [_][3]u8{
     .{ 206, 60, 174 },
 };
 
+/// rotate offsets by amt (there's probably a better way of doing this, but this works)
 inline fn rotateOffsetByAmt(offsets: []i8, amt: usize) void {
     if (amt == 0) {
         return;
@@ -26,6 +27,7 @@ inline fn rotateOffsetByAmt(offsets: []i8, amt: usize) void {
     }
 }
 
+/// Iterator for relative offsets in a shape based on the current position
 const ShapeIteratorRelative = struct {
     offsets: []const i8,
     position: [2]i8,
@@ -60,6 +62,7 @@ pub const Shape = struct {
         };
     }
 
+    /// Randomize the shape and set its color
     pub fn randomize(self: *Shape) !void {
         const shape_offsets = all_shapes[self.rand.intRangeAtMost(usize, 0, all_shapes.len - 1)];
         const amt_rotates = self.rand.intRangeAtMost(usize, 0, 3);
@@ -71,6 +74,7 @@ pub const Shape = struct {
         self.offsets = offset_copy;
     }
 
+    /// Check if the shape is in bounds
     pub inline fn inBounds(self: *Shape, y: i8, x: i8) bool {
         var i: usize = 0;
         while (i < self.offsets.len - 1) : (i += 2) {
@@ -83,6 +87,7 @@ pub const Shape = struct {
         return true;
     }
 
+    /// Get an iterator for the shape based on the current position
     pub fn iterRelative(self: *const Shape, position: [2]i8) ShapeIteratorRelative {
         return ShapeIteratorRelative.init(
             self.offsets,

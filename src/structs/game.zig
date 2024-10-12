@@ -49,6 +49,7 @@ pub const Game = struct {
         }
     }
 
+    /// Move the selected shape in the given direction
     pub fn moveShape(self: *Game, index: usize) void {
         const move_direction = directions[index];
         const selected_shape = &self.shapes[self.selected_index];
@@ -61,6 +62,7 @@ pub const Game = struct {
         }
     }
 
+    /// Get the next available shape in order
     pub fn getNextAvailableShapeIndex(self: *Game) !usize {
         var i: usize = @mod(self.selected_index + 1, self.shapes.len);
         while (i != self.selected_index) : (i = @mod(i + 1, self.shapes.len)) {
@@ -79,6 +81,7 @@ pub const Game = struct {
         return 0;
     }
 
+    /// Place the selected shape on the board if it doesn't collide
     pub fn placeShape(self: *Game) !void {
         const selected_shape = &self.shapes[self.selected_index];
         if (!self.shapeCollidesWithOtherShapes(selected_shape)) {
@@ -95,6 +98,7 @@ pub const Game = struct {
         }
     }
 
+    /// Switch to the next available shape
     pub fn switchSelectedShape(self: *Game) !void {
         self.selected_index = try self.getNextAvailableShapeIndex();
         self.position = .{ amt_cells / 2, amt_cells / 2 };
@@ -103,6 +107,7 @@ pub const Game = struct {
         self.highlightPotentialMatches();
     }
 
+    /// Draw the contents of the board to the display
     pub fn drawBoardContents(self: *Game, display: *const vaxis.Window) void {
         for (0..amt_cells) |x| {
             for (0..amt_cells) |y| {
@@ -136,12 +141,14 @@ pub const Game = struct {
         }
     }
 
+    /// Draw the score to the score display
     pub fn displayGameScore(self: *Game, display: *const vaxis.Window) !void {
         _ = try display.printSegment(.{
             .text = self.score_display_buffer.iter(),
         }, .{});
     }
 
+    /// Temporarily color the selected shape on the board to show current position
     fn tempColorCurrentShape(self: *Game, shape: *const Shape) void {
         var iter = shape.iterRelative(self.position);
         while (iter.next()) |vector2| {
@@ -149,6 +156,7 @@ pub const Game = struct {
         }
     }
 
+    /// Resets all pixels to their default state
     fn clearBoardTemp(self: *Game) void {
         self.num_scored = 0;
         for (&self.board) |*arr| {
@@ -158,6 +166,7 @@ pub const Game = struct {
         }
     }
 
+    /// Check if a shape collides with other shapes
     fn shapeCollidesWithOtherShapes(self: *Game, shape: *const Shape) bool {
         var iter = shape.iterRelative(self.position);
         while (iter.next()) |vector2| {
@@ -168,6 +177,7 @@ pub const Game = struct {
         return false;
     }
 
+    /// Highlights potential matches on the board
     fn highlightPotentialMatches(self: *Game) void {
         if (self.shapeCollidesWithOtherShapes(&self.shapes[self.selected_index])) {
             return;
@@ -200,6 +210,7 @@ pub const Game = struct {
         }
     }
 
+    /// Checks for matches in a row
     fn checkRow(self: *Game, rowIndex: usize) bool {
         for (self.board[rowIndex]) |v| {
             if (v.shape_colour == null and v.current_colour == null) {
@@ -212,6 +223,7 @@ pub const Game = struct {
         return true;
     }
 
+    /// Checks for matches in a column
     fn checkColumn(self: *Game, column_index: usize) bool {
         for (self.board) |row| {
             const pixel = row[column_index];
@@ -225,6 +237,7 @@ pub const Game = struct {
         return true;
     }
 
+    /// Checks for matches in a square
     fn checkSquare(self: *Game, square_number: usize) bool {
         var y: usize = square_number / 3;
         var x: usize = square_number - (3 * y);
@@ -246,12 +259,14 @@ pub const Game = struct {
         return true;
     }
 
+    /// Get the square index from a position
     inline fn getSquareIndex(position: [2]usize) usize {
         const y: usize = position[0] / 3;
         const x: usize = position[1] / 3;
         return (y * 3) + x;
     }
 
+    /// Processes all matches after placing a shape, and updates the score
     fn processScoredMatchingShapes(self: *Game) void {
         var amt_pixels: usize = 0;
         for (&self.board) |*arr| {
@@ -265,6 +280,7 @@ pub const Game = struct {
         self.score += amt_pixels * self.num_scored;
     }
 
+    /// Update the score display buffer with the current score
     fn updateScoreDisplayBuffer(self: *Game) !void {
         self.score_display_buffer.crop(7);
         var buf: [max_num_width]u8 = undefined;
