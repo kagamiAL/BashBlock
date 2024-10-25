@@ -122,10 +122,10 @@ pub const Game = struct {
                     color = default_color;
                 }
                 const opts = vaxis.Window.ChildOptions{
-                    .x_off = (x * 2),
-                    .y_off = y,
-                    .width = .{ .limit = 1 },
-                    .height = .{ .limit = 1 },
+                    .x_off = (@as(u16, @intCast(x)) * 2),
+                    .y_off = (@as(u16, @intCast(y))),
+                    .width = 1,
+                    .height = 1,
                 };
                 const child = display.child(opts);
                 child.writeCell(0, 0, .{
@@ -143,7 +143,7 @@ pub const Game = struct {
 
     /// Draw the score to the score display
     pub fn displayGameScore(self: *Game, display: *const vaxis.Window) !void {
-        _ = try display.printSegment(.{
+        _ = display.printSegment(.{
             .text = self.score_display_buffer.iter(),
         }, .{});
     }

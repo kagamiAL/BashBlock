@@ -151,8 +151,8 @@ const BashBlock = struct {
         const main_display = win.child(.{
             .x_off = win.width / 2 - offset_x,
             .y_off = win.height / 2 - offset_y,
-            .width = .{ .limit = size_x },
-            .height = .{ .limit = size_y },
+            .width = size_x,
+            .height = size_y,
             .border = .{
                 .where = .all,
                 .glyphs = .single_square,
@@ -161,18 +161,18 @@ const BashBlock = struct {
         const score_display = win.child(.{
             .x_off = 0,
             .y_off = 1,
-            .width = .{ .limit = Game.max_num_width + 7 },
-            .height = .{ .limit = 1 },
+            .width = Game.max_num_width + 7,
+            .height = 1,
         });
         const info_display = win.child(.{
             .x_off = 0,
             .y_off = win.height - 1,
-            .width = .{ .limit = info_str.len },
-            .height = .{ .limit = 1 },
+            .width = info_str.len,
+            .height = 1,
         });
         game_main.drawBoardContents(&main_display);
         try game_main.displayGameScore(&score_display);
-        _ = try info_display.printSegment(.{ .text = info_str }, .{});
+        _ = info_display.printSegment(.{ .text = info_str }, .{});
     }
 };
 
