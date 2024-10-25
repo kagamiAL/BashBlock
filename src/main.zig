@@ -48,6 +48,17 @@ const BashBlock = struct {
     /// The vaxis instance
     vx: vaxis.Vaxis,
 
+    fn getDirection(char: u21) usize {
+        //There has to be a better scalable way to do this surely
+        return switch (char) {
+            'w' => 2,
+            'a' => 0,
+            's' => 3,
+            'd' => 1,
+            else => 0,
+        };
+    }
+
     pub fn init(allocator: std.mem.Allocator) !BashBlock {
         return .{
             .allocator = allocator,
@@ -122,6 +133,7 @@ const BashBlock = struct {
                     13 => try game_main.placeShape(),
                     92 => try game_main.switchSelectedShape(),
                     57350...57353 => game_main.moveShape(key.codepoint - 57350),
+                    'w', 'a', 's', 'd' => game_main.moveShape(getDirection(key.codepoint)),
                     'x' => try game_main.switchSelectedShape(),
                     'c' => try game_main.placeShape(),
                     else => {},
